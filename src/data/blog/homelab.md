@@ -1,4 +1,4 @@
-----
+---
 title: "Building a two-node Proxmox homelab"
 author: Josh Forrest
 pubDatetime: 2026-04-10T22:17:18.524Z
