@@ -50,7 +50,7 @@ Across the two nodes, the cluster runs around fifteen LXC containers, all Linux.
 - **[Immich](/posts/immich/)** - self-hosted photo backup and gallery, replaces iCloud Photos
 - **[Vaultwarden](/posts/vaultwarden/)** - self-hosted Bitwarden-compatible password manager
 - **[Plex](/posts/plex/)** - media server, backed by the 6TB drive on proxmox2
-- **Uptime Kuma** - service monitoring and status dashboard
+- **[Uptime Kuma](/posts/uptimekuma/)** - service monitoring and status dashboard
 - **Mealie** - self-hosted recipe manager
 - **n8n** - workflow automation, currently used for automatic recipe import from TikTok and Instagram via a Telegram bot
 - **AI Workers** - a Flask API wrapping Ollama (llama3.2:3b) and Whisper, used by the recipe automation to transcribe audio, detect recipes, and extract structured data
