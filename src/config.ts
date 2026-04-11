@@ -2,7 +2,7 @@ export const SITE = {
   website: "https://jtforrest.com/", 
   author: "Josh Forrest",
   profile: "https://jtforrest.com/",
-  desc: "Personal site of Josh Forrest — projects and write-ups.",
+  desc: "Personal site of Josh Forrest - projects and write-ups.",
   title: "Josh Forrest",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
