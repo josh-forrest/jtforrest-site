@@ -36,7 +36,7 @@ This was the part that took the most thinking. I wanted to be able to upload fro
 
 The answer uses my IONOS edge VPS as an intermediary. The architecture works like this:
 
-1. A **WireGuard tunnel** connects the edge VPS to my homelab. The homelab end runs in a dedicated LXC container (CT 113). Critically, both ends of the tunnel are locked down by IP: the VPS can only route to Immich's specific IP and port (`10.10.20.21:2283`) through the tunnel, and the homelab-side iptables rules drop everything else.
+1. A **WireGuard tunnel** connects the edge VPS to my homelab. The homelab end runs in a dedicated LXC container. Critically, both ends of the tunnel are locked down by IP: the VPS can only route to Immich's specific IP and port through the tunnel, and the homelab-side iptables rules drop everything else.
 2. **Nginx** on the VPS acts as a reverse proxy - `photos.jtforrest.com` resolves to the VPS's public IP, Nginx terminates TLS (via Let's Encrypt) and forwards the request through the WireGuard tunnel to Immich.
 3. My home IP is never in the picture. The VPS is the only thing publicly reachable, and its blast radius is limited to itself.
 

@@ -31,7 +31,7 @@ The thing that makes this realistic is [Vaultwarden](https://github.com/dani-gar
 
 ## Where it runs
 
-Vaultwarden lives in an LXC container on `proxmox2` at `10.10.20.16`, listening on port 8000, sitting on the container VLAN like the rest of my services. It's a small, single-purpose container - Vaultwarden itself, a SQLite database for the vault, and that's it. Resource usage is essentially zero; it idles below 1% CPU and uses a few hundred MB of RAM.
+Vaultwarden lives in an LXC container on `proxmox2`, sitting on the container VLAN like the rest of my services. It's a small, single-purpose container - Vaultwarden itself, a SQLite database for the vault, and that's it. Resource usage is essentially zero; it idles below 1% CPU and uses a few hundred MB of RAM.
 
 The data that actually matters - the vault itself - is encrypted at rest using a key derived from my master password, the same way Bitwarden's official server stores it. Even if someone got root on the LXC and copied the database file, they'd still need my master password to decrypt anything inside it. That's the layer of security that makes self-hosting a password manager defensible: the server stores ciphertext, not plaintext, and the decryption key never leaves the client devices.
 
@@ -39,12 +39,12 @@ The data that actually matters - the vault itself - is encrypted at rest using a
 
 Vaultwarden has to be reachable from outside my home network. The whole point of a password manager is that it works on every device, everywhere - phone, laptop, in the office, on holiday - and a password manager that only works on my home Wi-Fi would be useless.
 
-I expose it via a [Cloudflare Tunnel](https://www.cloudflare.com/en-gb/products/tunnel/) at `vault.jtforrest.com`. A dedicated LXC container (`cloudflared`, CT 105) maintains a persistent outbound connection to Cloudflare's edge - no inbound ports, no VPS required. From the outside, the flow is:
+I expose it via a [Cloudflare Tunnel](https://www.cloudflare.com/en-gb/products/tunnel/) at `vault.jtforrest.com`. A dedicated LXC container running `cloudflared` maintains a persistent outbound connection to Cloudflare's edge - no inbound ports, no VPS required. From the outside, the flow is:
 
 1. Browser extension or mobile app connects to `vault.jtforrest.com`
 2. Cloudflare terminates TLS, sits in front as a layer of protection (rate limiting, basic WAF, the lot)
 3. Cloudflare routes the request down the tunnel into my homelab
-4. The tunnel exits at the Vaultwarden LXC at `10.10.20.16:8000`
+4. The tunnel exits at the Vaultwarden LXC
 5. Vaultwarden responds back the same way
 
 There is **no inbound port open on my home router**. My home IP is never exposed. If someone wanted to attack the Vaultwarden instance directly, they'd have to first get past Cloudflare's edge, which is meaningfully harder than scanning a residential IP range for open ports.

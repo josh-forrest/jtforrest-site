@@ -28,8 +28,8 @@ DNS-level blocking solves all of that in one place. Every device on the network 
 
 I run AdGuard Home as **two separate instances** - a primary and a secondary - on different physical nodes in my Proxmox cluster:
 
-- **Primary** on `proxmox2` at `10.10.20.11`
-- **Secondary** on `proxmox1` at `10.10.20.12`
+- **Primary** on `proxmox2`
+- **Secondary** on `proxmox1`
 
 Both are configured as DNS servers on my router (a Ubiquiti EdgeRouter 4), so every device on the network gets handed both addresses via DHCP. If the primary is down - for an update, a reboot, a kernel panic, whatever - devices fall back to the secondary automatically. No device-side configuration, no manual failover, no "the internet is broken" while I'm rebooting a container.
 
@@ -39,7 +39,7 @@ This was the single most important architectural decision in my whole homelab se
 
 The catch with running two AdGuard instances is that any change you make to one - adding a blocklist, whitelisting a domain, creating a DNS rewrite - has to be made to the other one too, or they'll drift apart. Doing that by hand is exactly the kind of thing that gets forgotten, then bites you a week later when you can't work out why a domain is blocked on one device but not another.
 
-The answer is [AdGuardHome-Sync](https://github.com/bakito/adguardhome-sync), a small open-source tool that does exactly what the name suggests: it watches the primary instance and pushes any configuration changes to the secondary on a schedule. I run it as its own LXC container at `10.10.20.13`. Once it's set up, I just edit the primary AdGuard UI as if it were the only instance, and everything else takes care of itself.
+The answer is [AdGuardHome-Sync](https://github.com/bakito/adguardhome-sync), a small open-source tool that does exactly what the name suggests: it watches the primary instance and pushes any configuration changes to the secondary on a schedule. I run it as its own LXC container. Once it's set up, I just edit the primary AdGuard UI as if it were the only instance, and everything else takes care of itself.
 
 ## Upstream DNS
 
@@ -68,7 +68,7 @@ A few things from running this for long enough to have opinions:
 - **Two instances on two nodes is non-negotiable.** I started with one and lived with one for a while. The day I had to reboot it during an upgrade and the entire house's internet stopped working for ninety seconds was the day I built the second one.
 - **Don't block too aggressively.** The temptation when you first set this up is to subscribe to every blocklist you can find. Don't. You'll break legitimate services, your family will be angry, and you'll spend the next two weeks whitelisting things one by one. Start with the AdGuard default + OISD, give it a week, and only add more if you have a specific reason.
 - **The query log is genuinely useful for debugging.** When something on the network can't reach a service it should be able to reach, the AdGuard query log is the first place I look - nine times out of ten the answer is "the device is trying to talk to a domain that's blocked by an overly aggressive blocklist," and the fix is one whitelist entry.
-- **DNS rewrites are underrated.** I use AdGuard's DNS rewrites to point internal hostnames at LXC IPs, so I can hit `immich.home.local` from inside the network instead of remembering `10.10.20.21`. I have entries for every service - `mealie.home.local`, `n8n.home.local`, `vault.home.local`, and so on. It's a small quality-of-life thing that adds up across a dozen containers.
+- **DNS rewrites are underrated.** I use AdGuard's DNS rewrites to point internal hostnames at LXC IPs, so I can hit `immich.home.local` from inside the network instead of remembering its IP address. I have entries for every service - `mealie.home.local`, `n8n.home.local`, `vault.home.local`, and so on. It's a small quality-of-life thing that adds up across a dozen containers.
 
 ## What's next
 

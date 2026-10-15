@@ -19,7 +19,7 @@ description: "How I monitor a dozen self-hosted services with two Uptime Kuma in
 
 When you run a single self-hosted service, you don't really need monitoring. If it's down, you'll notice when you try to use it.
 
-When you run a dozen, the maths changes. Some services you use every day (DNS, photo backup, password manager). Some you only touch occasionally (the YouTube downloader, the recipe manager). And some you don't actively use at all but other people do - Plex is the obvious example. The result is that without monitoring, services can be quietly broken for *days* before you notice, and the way you usually find out is someone telling you.
+When you run a dozen, the maths changes. Some services you use every day (DNS, photo backup, password manager). Some you only touch occasionally (the recipe manager, the workflow automation). And some you don't actively use at all but other people do - Plex is the obvious example. The result is that without monitoring, services can be quietly broken for *days* before you notice, and the way you usually find out is someone telling you.
 
 That's not how I want to learn that something has been down. I'd rather know about it the moment it happens, before anyone else does.
 
@@ -29,7 +29,7 @@ That's not how I want to learn that something has been down. I'd rather know abo
 
 Here's the slightly clever bit, and the thing I'm most pleased with about my monitoring setup: I run **two Uptime Kuma instances** - one inside my homelab, and one on the VPS that sits on the public internet. They watch different things from different places, and together they cover the failure modes that a single instance would miss.
 
-**The internal instance** runs in an LXC at `10.10.20.19` on `proxmox2`. It monitors all the services on my home network from the inside - Immich, Vaultwarden, Plex, AdGuard, the Proxmox web UIs, the LXCs themselves. Because it's on the same network as the things it's monitoring, it can hit them directly by their internal IPs without any of the public-internet routing in the middle. If something on the homelab goes down, the internal instance is the first to know.
+**The internal instance** runs in an LXC on `proxmox2`. It monitors all the services on my home network from the inside - Immich, Vaultwarden, Plex, AdGuard, the Proxmox web UIs, the LXCs themselves. Because it's on the same network as the things it's monitoring, it can hit them directly by their internal IPs without any of the public-internet routing in the middle. If something on the homelab goes down, the internal instance is the first to know.
 
 **The external instance** runs on the VPS - the same VPS that handles reverse-proxying my publicly-exposed services. It monitors the same services *but from the public internet*, using the public hostnames (`photos.jtforrest.com`, `vault.jtforrest.com`, `plex.jtforrest.com`, etc). It also monitors the VPS itself, the WireGuard tunnel back to the homelab, and a few external dependencies I care about.
 
@@ -58,7 +58,7 @@ The format is also useful: each notification tells me which monitor fired, wheth
 
 A non-exhaustive list of what's currently in Uptime Kuma:
 
-- **All my main self-hosted services** by HTTP check - [Immich](/posts/immich/), [Vaultwarden](/posts/vaultwarden/), [Plex](/posts/plex/), [AdGuard Home](/posts/adguard/) (×2), MeTube, n8n, and the rest
+- **All my main self-hosted services** by HTTP check - [Immich](/posts/immich/), [Vaultwarden](/posts/vaultwarden/), [Plex](/posts/plex/), [AdGuard Home](/posts/adguard/) (×2), n8n, and the rest
 - **The Proxmox host web interfaces** themselves - if a node goes offline, I want to know before its containers start failing
 - **Both AdGuard instances independently**, so I can tell if one has dropped while the other's still running
 - **The VPS itself**, monitored from the homelab side - confirms the WireGuard tunnel is up
